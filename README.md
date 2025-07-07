@@ -17,7 +17,7 @@ SMTP_PORT=2525
 FROM_EMAIL=<your-email-here>
 ```
 
-### 2. Install requirements.txt
+### 2. Run
 
 ```
 python3 -m venv venv
