@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Complaint Management System{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar is-white" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <span class="title is-4">
+                    <i class="fas fa-clipboard-list mr-2"></i>
+                    Complainto
+                </span>
+            </a>
+            
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                {% block navbar_start %}{% endblock %}
+            </div>
+            
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        {% block navbar_end %}
+                        <a class="button is-primary" href="/register">
+                            <strong>Sign up</strong>
+                        </a>
+                        <a class="button is-light" href="/login">
+                            Log in
+                        </a>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="notifications-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000;"></div>
+    
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Complainto</strong> - &COPY; 2025
+            </p>
+        </div>
+    </footer>
+    
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

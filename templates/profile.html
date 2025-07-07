@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Complaint Management System{% endblock %}
+
+{% block navbar_start %}
+<a class="navbar-item" href="/dashboard">
+    <i class="fas fa-tachometer-alt mr-2"></i>
+    Dashboard
+</a>
+{% endblock %}
+
+{% block navbar_end %}
+<div class="navbar-item has-dropdown is-hoverable">
+    <a class="navbar-link">
+        <i class="fas fa-user mr-2"></i>
+        <span class="user-name">User</span>
+    </a>
+    <div class="navbar-dropdown">
+        <a class="navbar-item" href="/profile">
+            <i class="fas fa-user-circle mr-2"></i>
+            Profile
+        </a>
+        <a class="navbar-item" href="/change-password">
+            <i class="fas fa-user-circle mr-2"></i>
+            Change password
+        </a>
+        <hr class="navbar-divider">
+        <a class="navbar-item" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt mr-2"></i>
+            Logout
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-half">
+        <div class="box">
+          <h2 class="title has-text-centered">Your Profile</h2>
+
+          <form id="profileForm">
+            <div class="field">
+              <label class="label">Name</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" name="name" id="nameInput" required>
+                <span class="icon is-left"><i class="fas fa-user"></i></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">Email</label>
+              <div class="control has-icons-left">
+                <input class="input" type="email" name="email" id="emailInput" required>
+                <span class="icon is-left"><i class="fas fa-envelope"></i></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <button type="submit" class="button is-primary is-fullwidth">
+                <span class="icon"><i class="fas fa-save"></i></span>
+                <span>Update Profile</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="box mt-5">
+          <h3 class="title is-5 has-text-danger">Danger Zone</h3>
+          <button class="button is-danger is-fullwidth" onclick="initiateAccountDeletion()">
+            <span class="icon"><i class="fas fa-trash-alt"></i></span>
+            <span>Delete Account</span>
+          </button>
+
+          <div id="deleteAccountForm" class="mt-4" style="display: none;">
+            <div class="notification is-warning">
+              <strong>Warning:</strong> This action is irreversible. All your data will be deleted permanently.
+            </div>
+
+            <div class="field">
+              <label class="label">Password</label>
+              <div class="control has-icons-left">
+                <input class="input" type="password" id="deletePassword">
+                <span class="icon is-left"><i class="fas fa-lock"></i></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label">OTP (sent to your email)</label>
+              <div class="control has-icons-left">
+                <input class="input" type="text" id="deleteOTP">
+                <span class="icon is-left"><i class="fas fa-key"></i></span>
+              </div>
+            </div>
+
+            <div class="field">
+              <button class="button is-danger is-fullwidth" onclick="confirmAccountDeletion()">
+                <span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+                <span>Confirm Deletion</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  loadAuthData();
+
+  if (!isAuthenticated()) {
+    showNotification('Please login to access your profile', 'danger');
+    window.location.href = '/login';
+    return;
+  }
+
+  async function loadProfile() {
+    try {
+      const profile = await apiCall('/api/profile');
+      document.getElementById('nameInput').value = profile.name;
+      document.getElementById('emailInput').value = profile.email;
+
+      loadComplaints();
+    } catch {
+      showNotification('Failed to load profile', 'danger');
+    }
+  }
+
+  async function loadComplaints() {
+    const container = document.getElementById('complaintsList');
+    container.innerHTML = '';
+
+    try {
+      const complaints = await apiCall('/api/my-complaints');
+      if (complaints.length === 0) {
+        container.innerHTML = '<p class="has-text-grey">No complaints submitted yet.</p>';
+        return;
+      }
+
+      complaints.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'box';
+        card.innerHTML = `
+          <p><strong>ID:</strong> ${c.id}</p>
+          <p><strong>Title:</strong> ${c.title}</p>
+          <p><strong>Status:</strong> <span class="tag is-${c.status === 'resolved' ? 'success' : 'warning'}">${c.status}</span></p>
+          <p><small><strong>Created:</strong> ${new Date(c.created_at).toLocaleString()}</small></p>
+        `;
+        container.appendChild(card);
+      });
+    } catch {
+      container.innerHTML = '<p class="has-text-danger">Failed to load complaints.</p>';
+    }
+  }
+
+  document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.classList.add('is-loading');
+
+    try {
+      await apiCall('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      showNotification('Profile updated successfully!');
+    } catch (error) {
+      showNotification(error.message, 'danger');
+    } finally {
+      submitBtn.classList.remove('is-loading');
+    }
+  });
+
+  window.initiateAccountDeletion = async function () {
+    try {
+      const profile = await apiCall('/api/profile');
+      await apiCall('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: profile.email })
+      });
+
+      document.getElementById('deleteAccountForm').style.display = 'block';
+      showNotification('OTP sent to your email', 'info');
+    } catch (error) {
+      showNotification(error.message, 'danger');
+    }
+  }
+
+  window.confirmAccountDeletion = async function () {
+    const password = document.getElementById('deletePassword').value;
+    const otp = document.getElementById('deleteOTP').value;
+
+    try {
+      await apiCall('/api/account', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, otp })
+      });
+
+      showNotification('Account deleted successfully', 'success');
+      clearAuthData();
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 1500);
+    } catch (error) {
+      showNotification(error.message, 'danger');
+    }
+  }
+
+  loadProfile();
+});
+</script>
+{% endblock %}

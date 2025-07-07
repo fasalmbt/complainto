@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Complaint Management System{% endblock %}
+
+{% block content %}
+<section class="hero is-fullheight hero-gradient is-bold">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <h1 class="title is-1 has-text-white has-text-weight-bold mb-4">
+        <i class="fas fa-clipboard-list mr-2"></i> ComplaintHub
+      </h1>
+      <h2 class="subtitle is-3 has-text-white mb-5">
+        Modern complaint management made simple
+      </h2>
+      <p class="is-size-5 has-text-white mb-6">
+        Submit, track, and resolve complaints efficiently with our streamlined platform.
+      </p>
+
+      <div class="buttons is-centered is-flex is-justify-content-center">
+        <a class="button is-white is-medium is-rounded px-5 py-4 has-shadow" href="/register">
+          <span class="icon is-medium"><i class="fas fa-user-plus"></i></span>
+          <span class="is-size-5">Get Started</span>
+        </a>
+        <a class="button is-light is-medium is-rounded px-5 py-4 has-shadow" href="/login">
+          <span class="icon is-medium"><i class="fas fa-sign-in-alt"></i></span>
+          <span class="is-size-5">Sign In</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section has-background-white">
+  <div class="container">
+    <div class="columns is-multiline is-centered">
+      <div class="column is-4">
+        <div class="card card-hover has-shadow">
+          <div class="card-content has-text-centered py-6">
+            <span class="icon is-large has-text-primary mb-4">
+              <i class="fas fa-paper-plane fa-3x"></i>
+            </span>
+            <h3 class="title is-4">Easy Submission</h3>
+            <p class="content">
+              Submit complaints quickly with our intuitive form. Add screenshots and detailed descriptions effortlessly.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-4">
+        <div class="card card-hover has-shadow">
+          <div class="card-content has-text-centered py-6">
+            <span class="icon is-large has-text-info mb-4">
+              <i class="fas fa-chart-line fa-3x"></i>
+            </span>
+            <h3 class="title is-4">Real-time Tracking</h3>
+            <p class="content">
+              Track your complaint status in real-time. Get updates and notifications as your case progresses.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-4">
+        <div class="card card-hover has-shadow">
+          <div class="card-content has-text-centered py-6">
+            <span class="icon is-large has-text-success mb-4">
+              <i class="fas fa-users-cog fa-3x"></i>
+            </span>
+            <h3 class="title is-4">Admin Dashboard</h3>
+            <p class="content">
+              Comprehensive admin tools for managing complaints, updating statuses, and maintaining communication.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section has-background-light">
+  <div class="container">
+    <div class="columns is-vcentered">
+      <div class="column is-6">
+        <h2 class="title is-2 mb-4">Why Choose ComplaintHub?</h2>
+        <div class="content is-medium">
+          <ul>
+            <li><strong>User-Friendly:</strong> Intuitive interface for all users</li>
+            <li><strong>Secure:</strong> Your data is protected with modern security</li>
+            <li><strong>Efficient:</strong> Streamlined workflow for faster resolution</li>
+            <li><strong>Transparent:</strong> Clear communication throughout the process</li>
+          </ul>
+        </div>
+        <a class="button is-primary is-medium is-rounded mt-4" href="/register">
+          Start Using ComplaintHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.hero-gradient {
+  background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+.has-shadow {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}

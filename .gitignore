@@ -1,0 +1,17 @@
+# Ignore Python bytecode cache folders
+__pycache__/
+*.py[cod]
+
+# Ignore SQLite database files
+*.db
+
+# Ignore environment variables file
+.env
+
+# Ignore virtual environment folders (common names)
+venv/
+env/
+.venv/
+
+# Ignore uploads folder contents
+static/uploads/
